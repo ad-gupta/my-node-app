@@ -1,0 +1,29 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: ["main"] # Run whenever code is pushed to the 'main' branch
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step A: Download the code from your repo
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step B: Log in to Docker Hub (The Warehouse)
+      - name: Login to Dcoker Hub
+        uses: docker/login-actions@v2
+        with:
+          username: ${{secrets.DOCKER_USERNAME}}
+          password: ${{secrets.DOCKER_PASSWORD}}
+
+      # Step C: Build the box and ship it to the warehouse
+      - name: Build and Push
+        users: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{secrets.DOCKER_USERNAME}}/my-node-app:latest
